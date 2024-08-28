@@ -1,7 +1,7 @@
 
 # ANTLR Custom Language Java Compiler to C Example
 
-This repos contains code and tutorial of an example of how to create a custom language that creates C output using ANTLR and Java
+This repo contains code and tutorial of an example of how to create a custom language that creates C output using ANTLR and Java
 
 ## Example:
 
