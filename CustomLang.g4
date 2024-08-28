@@ -1,12 +1,15 @@
-grammar MyLang;
+grammar CustomLang;
 
 program: statement+;
 
 statement: assignment
+         | declaration
          | printStmt
          | scanStmt
          | expr ';' 
          ;
+
+declaration: 'DEF' ID ';';
 
 assignment: 'DEF' ID '<-' expr ';';
 

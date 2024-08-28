@@ -1,6 +1,0 @@
-DEF a <- 0;
-DEF b <- 0 ;
-READ(&a);
-READ(&b);
-DEF c <- (a + b) * 2.0;
-WRITE("Result:", c);

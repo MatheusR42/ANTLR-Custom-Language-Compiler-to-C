@@ -3,12 +3,19 @@ import org.antlr.v4.runtime.tree.*;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class MyLangCompiler extends MyLangBaseVisitor<String> {
+public class Compiler extends CustomLangBaseVisitor<String> {
 
     private StringBuilder cCode = new StringBuilder();
     
     @Override
-    public String visitProgram(MyLangParser.ProgramContext ctx) {
+    public String visitDeclaration(CustomLangParser.DeclarationContext ctx) {
+        String id = ctx.ID().getText();
+        cCode.append("double ").append(id).append(";\n");
+        return null;
+    }
+    
+    @Override
+    public String visitProgram(CustomLangParser.ProgramContext ctx) {
         cCode.append("#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n");
         visitChildren(ctx);
         cCode.append("return 0;\n}");
@@ -16,7 +23,7 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
     }
 
     @Override
-    public String visitAssignment(MyLangParser.AssignmentContext ctx) {
+    public String visitAssignment(CustomLangParser.AssignmentContext ctx) {
         String id = ctx.ID().getText();
         String expr = visit(ctx.expr());
         cCode.append("double ").append(id).append(" = ").append(expr).append(";\n");
@@ -24,7 +31,7 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
     }
 
     @Override
-    public String visitPrintStmt(MyLangParser.PrintStmtContext ctx) {
+    public String visitPrintStmt(CustomLangParser.PrintStmtContext ctx) {
         String message = ctx.STRING().getText();
         String format = "\"%lf\\n\"";
         String expr = visit(ctx.expr());
@@ -33,7 +40,7 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
     }
 
     @Override
-    public String visitScanStmt(MyLangParser.ScanStmtContext ctx) {
+    public String visitScanStmt(CustomLangParser.ScanStmtContext ctx) {
         String id = ctx.ID().getText();
         cCode.append("if (scanf(\"%lf\", &").append(id).append(") != 1) {\n");
         cCode.append("    fprintf(stderr, \"Error: Invalid input. Expected a decimal number.\\n\");\n");
@@ -43,7 +50,7 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
     }
 
     @Override
-    public String visitExpr(MyLangParser.ExprContext ctx) {
+    public String visitExpr(CustomLangParser.ExprContext ctx) {
         if (ctx.op != null) {
             String left = visit(ctx.expr(0));
             String right = visit(ctx.expr(1));
@@ -59,12 +66,12 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
 
     public static void main(String[] args) throws Exception {
         CharStream input = CharStreams.fromFileName(args[0]);
-        MyLangLexer lexer = new MyLangLexer(input);
+        CustomLangLexer lexer = new CustomLangLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        MyLangParser parser = new MyLangParser(tokens);
+        CustomLangParser parser = new CustomLangParser(tokens);
         ParseTree tree = parser.program();
 
-        MyLangCompiler compiler = new MyLangCompiler();
+        Compiler compiler = new Compiler();
         String cCode = compiler.visit(tree);
         
         try (FileWriter fileWriter = new FileWriter("output.c")) {

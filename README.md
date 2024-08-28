@@ -11,21 +11,24 @@ https://github.com/antlr/antlr4/blob/master/doc/getting-started.md
 
 Create a file named MyLang.g4:
 ```
-grammar MyLang;
+grammar CustomLang;
 
 program: statement+;
 
 statement: assignment
+         | declaration
          | printStmt
          | scanStmt
          | expr ';' 
          ;
 
-assignment: ID '=' expr ';';
+declaration: 'DEF' ID ';';
 
-printStmt: 'printf' '(' STRING ',' expr ')' ';';
+assignment: 'DEF' ID '<-' expr ';';
 
-scanStmt: 'scanf' '(' STRING ',' '&' ID ')' ';';
+printStmt: 'WRITE' '(' STRING ',' expr ')' ';';
+
+scanStmt: 'READ' '(&' ID ')' ';';
 
 expr: expr op=('*'|'/') expr
     | expr op=('+'|'-') expr
@@ -43,8 +46,8 @@ WS: [ \t\r\n]+ -> skip;
 ## 2. Generate the Java Code with ANTLR
 
 ```
-antlr4 -visitor MyLang.g4
-javac MyLang*.java
+antlr4 -visitor CustomLang.g4
+javac CustomLang*.java
 ```
 
 ## 3. Create the Java Compiler Class
@@ -128,34 +131,47 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
 ## 4. Compile and Run Your Compiler
 
 ```
-javac MyLang*.java MyLangCompiler.java
+javac CustomLang*.java Compiler.java
 ```
 
 ## 5. Example Language Code
 
-Create a file named input.mylang:
+Create a file named `input.customlang`:
 ```
-a = 5.5 + 4.5;
-b = a * 2;
-printf("Result: %f\n", b);
-scanf("%lf", &a);
+DEF a;
+DEF b;
+DEF c <- 2.0;
+READ(&a);
+READ(&b);
+DEF d <- (a + b) * c;
+WRITE("Result:", d);
 ```
 
 Then, run your compiler with a sample file:
 ```
-java MyLangCompiler input.mylang
+java Compiler input.customlang
 ```
 
 Running the above will generate output.c:
 
 ```
 #include <stdio.h>
+#include <stdlib.h>
 
 int main() {
-double a = 5.5 + 4.5;
-double b = a * 2;
-printf("Result: %f\n", b);
-scanf("%lf", &a);
+double a;
+double b;
+double c = 2.0;
+if (scanf("%lf", &a) != 1) {
+    fprintf(stderr, "Error: Invalid input. Expected a decimal number.\n");
+    exit(1);
+}
+if (scanf("%lf", &b) != 1) {
+    fprintf(stderr, "Error: Invalid input. Expected a decimal number.\n");
+    exit(1);
+}
+double d = (a + b) * c;
+printf("Result:""%lf\n", d);
 return 0;
 }
 ```

@@ -1,0 +1,7 @@
+DEF a;
+DEF b;
+DEF c <- 2.0;
+READ(&a);
+READ(&b);
+DEF d <- (a + b) * c;
+WRITE("Result:", d);
