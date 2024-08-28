@@ -9,7 +9,7 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
     
     @Override
     public String visitProgram(MyLangParser.ProgramContext ctx) {
-        cCode.append("#include <stdio.h>\n\nint main() {\n");
+        cCode.append("#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n");
         visitChildren(ctx);
         cCode.append("return 0;\n}");
         return cCode.toString();
@@ -25,17 +25,20 @@ public class MyLangCompiler extends MyLangBaseVisitor<String> {
 
     @Override
     public String visitPrintStmt(MyLangParser.PrintStmtContext ctx) {
-        String format = ctx.STRING().getText();
+        String message = ctx.STRING().getText();
+        String format = "\"%lf\\n\"";
         String expr = visit(ctx.expr());
-        cCode.append("printf(").append(format).append(", ").append(expr).append(");\n");
+        cCode.append("printf(").append(message).append(format).append(", ").append(expr).append(");\n");
         return null;
     }
 
     @Override
     public String visitScanStmt(MyLangParser.ScanStmtContext ctx) {
-        String format = ctx.STRING().getText();
         String id = ctx.ID().getText();
-        cCode.append("scanf(").append(format).append(", &").append(id).append(");\n");
+        cCode.append("if (scanf(\"%lf\", &").append(id).append(") != 1) {\n");
+        cCode.append("    fprintf(stderr, \"Error: Invalid input. Expected a decimal number.\\n\");\n");
+        cCode.append("    exit(1);\n");
+        cCode.append("}\n");
         return null;
     }
 

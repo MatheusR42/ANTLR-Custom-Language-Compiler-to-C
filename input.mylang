@@ -1,4 +1,6 @@
-a = 5.5 + 4.5;
-b = a * 2;
-printf("Result: %f\n", b);
-scanf("%lf", &a);
+DEF a <- 0;
+DEF b <- 0 ;
+READ(&a);
+READ(&b);
+DEF c <- (a + b) * 2.0;
+WRITE("Result:", c);

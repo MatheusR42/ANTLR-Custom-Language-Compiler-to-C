@@ -8,11 +8,11 @@ statement: assignment
          | expr ';' 
          ;
 
-assignment: ID '=' expr ';';
+assignment: 'DEF' ID '<-' expr ';';
 
-printStmt: 'printf' '(' STRING ',' expr ')' ';';
+printStmt: 'WRITE' '(' STRING ',' expr ')' ';';
 
-scanStmt: 'scanf' '(' STRING ',' '&' ID ')' ';';
+scanStmt: 'READ' '(&' ID ')' ';';
 
 expr: expr op=('*'|'/') expr
     | expr op=('+'|'-') expr
