@@ -13,9 +13,9 @@ declaration: 'DEF' ID ';';
 
 assignment: 'DEF' ID '<-' expr ';';
 
-printStmt: 'WRITE' '(' STRING ',' expr ')' ';';
+printStmt: 'WRITE' '(' STRING (',' expr)? ')' ';';
 
-scanStmt: 'READ' '(&' ID ')' ';';
+scanStmt: 'READ' '(' ID ')' ';';
 
 expr: expr op=('*'|'/') expr
     | expr op=('+'|'-') expr

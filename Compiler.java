@@ -33,9 +33,13 @@ public class Compiler extends CustomLangBaseVisitor<String> {
     @Override
     public String visitPrintStmt(CustomLangParser.PrintStmtContext ctx) {
         String message = ctx.STRING().getText();
-        String format = "\"%lf\\n\"";
-        String expr = visit(ctx.expr());
-        cCode.append("printf(").append(message).append(format).append(", ").append(expr).append(");\n");
+        if (ctx.expr() != null) {
+            String format = "\"%lf\\n\"";
+            String expr = visit(ctx.expr());
+            cCode.append("printf(").append(message).append(format).append(", ").append(expr).append(");\n");
+        } else {
+            cCode.append("printf(").append(message).append(");\n");
+        }
         return null;
     }
 

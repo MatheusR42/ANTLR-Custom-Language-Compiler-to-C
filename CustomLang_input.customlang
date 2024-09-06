@@ -1,7 +1,13 @@
 DEF a;
 DEF b;
 DEF c <- 2.0;
-READ(&a);
-READ(&b);
-DEF d <- (a + b) * c;
-WRITE("Result:", d);
+WRITE("Digite o valor de A: ");
+READ(a);
+WRITE("Digite o valor de b: ");
+READ(b);
+
+WRITE("C está predefinido com valor: ", c);
+
+DEF d <- a + b * c;
+WRITE("Resultado: ");
+WRITE("a + b * c = ", d);
