@@ -10,10 +10,16 @@ This repo contains code and tutorial of an example of how to create a custom lan
 DEF a;
 DEF b;
 DEF c <- 2.0;
-READ(&a);
-READ(&b);
-DEF d <- (a + b) * c;
-WRITE("Result:", d);
+WRITE("Digite o valor de A: ");
+READ(a);
+WRITE("Digite o valor de b: ");
+READ(b);
+
+WRITE("C está predefinido com valor: ", c);
+
+DEF d <- a + b * c;
+WRITE("Resultado: ");
+WRITE("a + b * c = ", d);
 ```
 
 Result:
@@ -25,16 +31,21 @@ int main() {
 double a;
 double b;
 double c = 2.0;
+printf("Digite o valor de A: ");
 if (scanf("%lf", &a) != 1) {
     fprintf(stderr, "Error: Invalid input. Expected a decimal number.\n");
     exit(1);
 }
+printf("Digite o valor de b: ");
 if (scanf("%lf", &b) != 1) {
     fprintf(stderr, "Error: Invalid input. Expected a decimal number.\n");
     exit(1);
 }
-double d = (a + b) * c;
-printf("Result:""%lf\n", d);
+printf("C está predefinido com valor: ""%lf\n", c);
+double d = a + b * c;
+printf("Resultado: ");
+printf("");
+printf("a + b * c = ""%lf\n", d);
 return 0;
 }
 ```
@@ -43,7 +54,7 @@ return 0;
 
 - Declare double variables (`DEF a;`)
 - Assignment to double variables (`DEF c <- 2.0;`)
-- Read variables (`READ(&a);`)
+- Read variables (`READ(a);`)
 - Make calculations (`DEF d <- (a + b) * c;`)
 - Print (`WRITE("Result:", d);`)
 
@@ -73,9 +84,9 @@ declaration: 'DEF' ID ';';
 
 assignment: 'DEF' ID '<-' expr ';';
 
-printStmt: 'WRITE' '(' STRING ',' expr ')' ';';
+printStmt: 'WRITE' '(' STRING (',' expr)? ')' ';';
 
-scanStmt: 'READ' '(&' ID ')' ';';
+scanStmt: 'READ' '(' ID ')' ';';
 
 expr: expr op=('*'|'/') expr
     | expr op=('+'|'-') expr
@@ -137,9 +148,13 @@ public class Compiler extends CustomLangBaseVisitor<String> {
     @Override
     public String visitPrintStmt(CustomLangParser.PrintStmtContext ctx) {
         String message = ctx.STRING().getText();
-        String format = "\"%lf\\n\"";
-        String expr = visit(ctx.expr());
-        cCode.append("printf(").append(message).append(format).append(", ").append(expr).append(");\n");
+        if (ctx.expr() != null) {
+            String format = "\"%lf\\n\"";
+            String expr = visit(ctx.expr());
+            cCode.append("printf(").append(message).append(format).append(", ").append(expr).append(");\n");
+        } else {
+            cCode.append("printf(").append(message).append(");\n");
+        }
         return null;
     }
 
@@ -198,10 +213,16 @@ Create a file named `CustomLang_input.customlang`:
 DEF a;
 DEF b;
 DEF c <- 2.0;
-READ(&a);
-READ(&b);
-DEF d <- (a + b) * c;
-WRITE("Result:", d);
+WRITE("Digite o valor de A: ");
+READ(a);
+WRITE("Digite o valor de b: ");
+READ(b);
+
+WRITE("C está predefinido com valor: ", c);
+
+DEF d <- a + b * c;
+WRITE("Resultado: ");
+WRITE("a + b * c = ", d);
 ```
 
 Then, run your compiler with a sample file:
@@ -219,16 +240,21 @@ int main() {
 double a;
 double b;
 double c = 2.0;
+printf("Digite o valor de A: ");
 if (scanf("%lf", &a) != 1) {
     fprintf(stderr, "Error: Invalid input. Expected a decimal number.\n");
     exit(1);
 }
+printf("Digite o valor de b: ");
 if (scanf("%lf", &b) != 1) {
     fprintf(stderr, "Error: Invalid input. Expected a decimal number.\n");
     exit(1);
 }
-double d = (a + b) * c;
-printf("Result:""%lf\n", d);
+printf("C está predefinido com valor: ""%lf\n", c);
+double d = a + b * c;
+printf("Resultado: ");
+printf("");
+printf("a + b * c = ""%lf\n", d);
 return 0;
 }
 ```
